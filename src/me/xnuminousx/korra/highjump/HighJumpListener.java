@@ -10,7 +10,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 public class HighJumpListener implements Listener {
 
 	@EventHandler
-	public void onSwing(PlayerToggleSneakEvent event) {
+	public void onSneak(PlayerToggleSneakEvent event) {
 		if (event.isCancelled()) {
 			return;
 		
