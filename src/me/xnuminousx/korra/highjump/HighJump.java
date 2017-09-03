@@ -62,13 +62,13 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	
 	@Override
 	public boolean isSneakAbility() {
-		return false;
+		return true;
 		
 	}
 
 	@Override
 	public boolean isHarmlessAbility() {
-		return false;
+		return true;
 	}
 
 	@Override
