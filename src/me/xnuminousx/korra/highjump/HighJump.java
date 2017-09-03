@@ -104,7 +104,6 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	@Override
 	public void load() {
 		ProjectKorra.plugin.getServer().getPluginManager().registerEvents(new HighJumpListener(), ProjectKorra.plugin);
-		ProjectKorra.log.info("Successfully loaded" + getName() + "by " + getAuthor());
 		
 		perm = new Permission("bending.ability.HighJump");
 		ProjectKorra.plugin.getServer().getPluginManager().addPermission(perm);
@@ -114,7 +113,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Height", 1);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Distance", 1);
 		ConfigManager.defaultConfig.save();
-		
+		ProjectKorra.log.info("Successfully loaded " + getName() + " by " + getAuthor());
 
 	}
 
