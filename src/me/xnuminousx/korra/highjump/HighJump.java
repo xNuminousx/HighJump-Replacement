@@ -126,7 +126,9 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public void stop() {
-
+		ProjectKorra.plugin.getServer().getLogger().info(getName() + " " + getVersion() + " by " + getAuthor() + " has been disabled!");
+		ProjectKorra.plugin.getServer().getPluginManager().removePermission(this.perm);
+		super.remove();
 	}
 
 }
