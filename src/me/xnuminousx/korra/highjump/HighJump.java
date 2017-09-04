@@ -48,16 +48,23 @@ public class HighJump extends ChiAbility implements AddonAbility {
 			Vector vec = player.getLocation().getDirection().normalize().multiply(-distance);
 			vec.setY(height);
 			player.setVelocity(vec);
-			poof ();
+			poof();
 			bPlayer.addCooldown(this);
-			remove();
+			return;
+		} else {
+			Vector vec = player.getVelocity();
+			vec.setY(height);
+			player.setVelocity(vec);
+			poof();
+			bPlayer.addCooldown(this);
 			return;
 		}
 
 	}
 	private void poof() {
 		player.getLocation();
-		ParticleEffect.CRIT.display(location, 1F, 0, 1F, 0.5F, 50);
+		ParticleEffect.CRIT.display(location, 1F, 0F, 1F, 0.5F, 50);
+		ParticleEffect.CLOUD.display(location, 1F, 0.5F, 1F, 0.002F, 30);
 	}
 	
 	@Override
@@ -82,7 +89,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	
 	public String getDescription() {
-		return "A replacement for the original HighJump, tap shift and you will jump backwards!";
+		return "A replacement for the original HighJump, tap shift and you will jump backwards or left click to jump up!";
 	}
 
 	@Override
@@ -105,7 +112,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	public void load() {
 		ProjectKorra.plugin.getServer().getPluginManager().registerEvents(new HighJumpListener(), ProjectKorra.plugin);
 		
-		perm = new Permission("bending.ability.HighJump");
+		perm = new Permission("bending.ability.highjump");
 		ProjectKorra.plugin.getServer().getPluginManager().addPermission(perm);
 		perm.setDefault(PermissionDefault.TRUE);
 		
