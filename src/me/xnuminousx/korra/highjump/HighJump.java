@@ -14,8 +14,9 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class HighJump extends ChiAbility implements AddonAbility {
 
-	private int height;
-	private int distance;
+	private long height;
+	private long distance;
+	private long lungeMultiplier;
 	private long cooldown;
 	private Permission perm;
 	
@@ -27,8 +28,9 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		this.height = ConfigManager.getConfig().getInt("ExtraAbilities.xNuminousx.HighJump.Height");
-		this.distance = ConfigManager.getConfig().getInt("ExtraAbilities.xNuminousx.HighJump.Distance");
+		this.height = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Height");
+		this.distance = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Distance");
+		this.lungeMultiplier = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.LungeMultiplier");
 		this.cooldown = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Cooldown");
 		this.origin = player.getLocation().clone();
 		this.location = origin.clone();
@@ -37,11 +39,8 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public void progress() {
-		if (!com.projectkorra.projectkorra.GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(org.bukkit.block.BlockFace.DOWN))) {
+		if (!com.projectkorra.projectkorra.GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(org.bukkit.block.BlockFace.DOWN)) || player.isDead() || !player.isOnline()) {
 			remove();
-			return;
-		}
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 		if (player.isSneaking()) {
@@ -52,38 +51,33 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		if (player.isSprinting()) {
 			onSprint();
 		}
-	}
-	private void onShift() {
-		Vector vec = player.getLocation().getDirection().normalize().multiply(-distance);
-		vec.setY(height);
-		player.setVelocity(vec);
 		poof();
 		bPlayer.addCooldown(this);
 		remove();
 		return;
 	}
-	private void onSprint() {
-		Vector vec = player.getLocation().getDirection().normalize().multiply(distance);
+	private void onShift() {
+		Vector vec = player.getLocation().getDirection().normalize().multiply(-distance);
 		vec.setY(height);
 		player.setVelocity(vec);
-		poof();
-		bPlayer.addCooldown(this);
-		remove();
+		return;
+	}
+	private void onSprint() {
+		Vector vec = player.getLocation().getDirection().normalize().multiply(distance * lungeMultiplier);
+		vec.setY(height);
+		player.setVelocity(vec);
 		return;
 	}
 	private void onClick() {
 		Vector vec = player.getVelocity();
 		vec.setY(height);
 		player.setVelocity(vec);
-		poof();
-		bPlayer.addCooldown(this);
-		remove();
 		return;
 	}
 	private void poof() {
 		player.getLocation();
-		ParticleEffect.CRIT.display(location, 1F, 0F, 1F, 0.5F, 50);
-		ParticleEffect.CLOUD.display(location, 1F, 0.5F, 1F, 0.002F, 30);
+		ParticleEffect.CRIT.display(location, 0.5F, 1F, 0.5F, 0.5F, 20);
+		ParticleEffect.CLOUD.display(location, 0.5F, 1F, 0.5F, 0.002F, 30);
 	}
 	
 	@Override
@@ -106,9 +100,13 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	public String getName() {
 		return "HighJump";
 	}
-	
+	@Override
 	public String getDescription() {
-		return "A replacement for the original HighJump, tap shift and you will jump backwards or left click to jump up!";
+		return "As a replacement for the original HighJump, this ability offers you many modes of mobility. When you tap shift you will be lunged backwards; possibly to escape enemies. When you left click you will jump high in the sky; possibly to dodge obstacles. If you left click WHILE sprinting, you will lunge forward; possibly as a way to get closer to your target. Enjoy!";
+	}
+	@Override
+	public String getInstructions() {
+		return "Left-Click: Jump up. Tap-Shift: Lunge backwards. Spint+Click: Lunge Forwards.";
 	}
 
 	@Override
@@ -118,7 +116,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public String getVersion() {
-		return "v1.4";
+		return "v1.6";
 	}
 
 
@@ -138,15 +136,17 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Cooldown", 5000);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Height", 1);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Distance", 1);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.LungeMultiplier", 2);
 		ConfigManager.defaultConfig.save();
 		ProjectKorra.log.info("Successfully loaded " + getName() + " by " + getAuthor());
-
 	}
 
 	@Override
 	public void stop() {
 		ProjectKorra.plugin.getServer().getLogger().info(getName() + " " + getVersion() + " by " + getAuthor() + " has been disabled!");
+		
 		ProjectKorra.plugin.getServer().getPluginManager().removePermission(this.perm);
+		
 		super.remove();
 	}
 
