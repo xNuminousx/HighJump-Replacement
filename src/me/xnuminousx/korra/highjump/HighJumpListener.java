@@ -32,5 +32,4 @@ public class HighJumpListener implements Listener {
 		new HighJump(event.getPlayer());
 	}
 
-
 }

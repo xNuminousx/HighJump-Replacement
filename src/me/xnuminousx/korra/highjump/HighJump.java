@@ -45,21 +45,40 @@ public class HighJump extends ChiAbility implements AddonAbility {
 			return;
 		}
 		if (player.isSneaking()) {
-			Vector vec = player.getLocation().getDirection().normalize().multiply(-distance);
-			vec.setY(height);
-			player.setVelocity(vec);
-			poof();
-			bPlayer.addCooldown(this);
-			return;
+			onShift();
 		} else {
-			Vector vec = player.getVelocity();
-			vec.setY(height);
-			player.setVelocity(vec);
-			poof();
-			bPlayer.addCooldown(this);
-			return;
+			onClick();
 		}
-
+		if (player.isSprinting()) {
+			onSprint();
+		}
+	}
+	private void onShift() {
+		Vector vec = player.getLocation().getDirection().normalize().multiply(-distance);
+		vec.setY(height);
+		player.setVelocity(vec);
+		poof();
+		bPlayer.addCooldown(this);
+		remove();
+		return;
+	}
+	private void onSprint() {
+		Vector vec = player.getLocation().getDirection().normalize().multiply(distance);
+		vec.setY(height);
+		player.setVelocity(vec);
+		poof();
+		bPlayer.addCooldown(this);
+		remove();
+		return;
+	}
+	private void onClick() {
+		Vector vec = player.getVelocity();
+		vec.setY(height);
+		player.setVelocity(vec);
+		poof();
+		bPlayer.addCooldown(this);
+		remove();
+		return;
 	}
 	private void poof() {
 		player.getLocation();
