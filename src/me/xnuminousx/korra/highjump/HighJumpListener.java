@@ -1,35 +1,48 @@
 package me.xnuminousx.korra.highjump;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.BendingPlayer;
 
 
 public class HighJumpListener implements Listener {
 
 	@EventHandler
 	public void onSneak(PlayerToggleSneakEvent event) {
-		if (event.isCancelled()) {
+
+		Player player = event.getPlayer();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+		if (event.isCancelled() || bPlayer == null) {
 			return;
-		
-		} else if (CoreAbility.hasAbility(event.getPlayer(), HighJump.class)) {
+
+		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase(null)) {
 			return;
-	
+
+		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump")) {
+			new HighJump(player);
 		}
-		new HighJump(event.getPlayer());
 
 	}
 	@EventHandler
 	public void onSwing(PlayerAnimationEvent event) {
-		if (event.isCancelled()) {
-		    return;
-		} else if (CoreAbility.hasAbility(event.getPlayer(), HighJump.class)) {
+
+		Player player = event.getPlayer();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+		if (event.isCancelled() || bPlayer == null) {
 			return;
+
+		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase(null)) {
+			return;
+
+		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump")) {
+			new HighJump(player);
 		}
-		new HighJump(event.getPlayer());
 	}
 
 }

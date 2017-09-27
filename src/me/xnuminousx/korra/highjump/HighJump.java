@@ -25,31 +25,41 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	
 	public HighJump(Player player) {
 		super(player);
+		
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
+		
+		setFields();
+		start();
+	}
+
+	private void setFields() {
 		this.height = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Height");
 		this.distance = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Distance");
 		this.lungeMultiplier = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.LungeMultiplier");
 		this.cooldown = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Cooldown");
 		this.origin = player.getLocation().clone();
 		this.location = origin.clone();
-		start();
+		
 	}
 
 	@Override
 	public void progress() {
-		if (!com.projectkorra.projectkorra.GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(org.bukkit.block.BlockFace.DOWN)) || player.isDead() || !player.isOnline()) {
+		if (player.isDead() || !player.isOnline() || !com.projectkorra.projectkorra.GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(org.bukkit.block.BlockFace.DOWN))) {
 			remove();
 			return;
 		}
 		if (player.isSneaking()) {
 			onShift();
+			
 		} else {
 			onClick();
+			
 		}
 		if (player.isSprinting()) {
 			onSprint();
+			
 		}
 		poof();
 		bPlayer.addCooldown(this);
@@ -116,7 +126,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public String getVersion() {
-		return "v1.6";
+		return "2.0";
 	}
 
 
