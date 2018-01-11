@@ -3,8 +3,6 @@ package me.xnuminousx.korra.highjump;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -21,14 +19,19 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	private HighJumpType highJumpType;
 
-	private long height;
-	private long distance;
-	private long lungeMultiplier;
+	private long jumpHeight;
+	private long lungeHeight;
+	private long evadeHeight;
+	private long evadeDistance;
+	private long lungeDistance;
 	private long cooldown;
-	private Permission perm;
 	
 	private Location location;
 	private Location origin;
+	
+	private boolean enableLunge;
+	private boolean enableJump;
+	private boolean enableEvade;
 	
 	public HighJump(Player player, HighJumpType highJumpType) {
 		super(player);
@@ -43,9 +46,18 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 
 	private void setFields() {
-		this.height = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Height");
-		this.distance = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Distance");
-		this.lungeMultiplier = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.LungeMultiplier");
+		this.enableEvade = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.EnableEvade");
+		this.enableJump = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.EnableJump");
+		this.enableLunge = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.EnableLunge");
+		
+		this.jumpHeight = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Jump.Height");
+		
+		this.lungeHeight = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Lunge.Height");
+		this.lungeDistance = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Lunge.Distance");
+		
+		this.evadeHeight = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Evade.Height");
+		this.evadeDistance = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Evade.Distance");
+		
 		this.cooldown = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Cooldown");
 		this.origin = player.getLocation().clone();
 		this.location = origin.clone();
@@ -59,11 +71,15 @@ public class HighJump extends ChiAbility implements AddonAbility {
 			return;
 		}
 		if (this.highJumpType == HighJumpType.SHIFT) {
-			onShift();
+			if (enableEvade) {
+				onShift();
+			}
 		} else if (this.highJumpType == HighJumpType.CLICK) {
 			if (player.isSprinting()) {
-				onSprint();
-			} else {
+				if (enableLunge) {
+					onSprint();
+				}
+			} else if (enableJump) {
 				onClick();
 			}
 		}
@@ -71,20 +87,20 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		remove();
 	}
 	private void onShift() {
-		Vector vec = player.getLocation().getDirection().normalize().multiply(-distance);
-		vec.setY(height);
+		Vector vec = player.getLocation().getDirection().normalize().multiply(-evadeDistance);
+		vec.setY(evadeHeight);
 		player.setVelocity(vec);
 		return;
 	}
 	private void onSprint() {
-		Vector vec = player.getLocation().getDirection().normalize().multiply(distance * lungeMultiplier);
-		vec.setY(height);
+		Vector vec = player.getLocation().getDirection().normalize().multiply(lungeDistance);
+		vec.setY(lungeHeight);
 		player.setVelocity(vec);
 		return;
 	}
 	private void onClick() {
 		Vector vec = player.getVelocity();
-		vec.setY(height);
+		vec.setY(jumpHeight);
 		player.setVelocity(vec);
 		return;
 	}
@@ -137,7 +153,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public String getVersion() {
-		return "2.0";
+		return "1.7";
 	}
 
 
@@ -150,23 +166,25 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	public void load() {
 		ProjectKorra.plugin.getServer().getPluginManager().registerEvents(new HighJumpListener(), ProjectKorra.plugin);
 		
-		perm = new Permission("bending.ability.highjump");
-		ProjectKorra.plugin.getServer().getPluginManager().addPermission(perm);
-		perm.setDefault(PermissionDefault.TRUE);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.EnableJump", true);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.EnableLunge", true);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.EnableEvade", true);
 		
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Cooldown", 5000);
-		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Height", 1);
-		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Distance", 1);
-		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.LungeMultiplier", 2);
+		
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Jump.Height", 1);
+		
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Lunge.Height", 1);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Lunge.Distance", 2);
+		
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Height", 1);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Distance", 1);
 		ConfigManager.defaultConfig.save();
-		ProjectKorra.log.info("Successfully loaded " + getName() + " by " + getAuthor());
 	}
 
 	@Override
 	public void stop() {
-		ProjectKorra.plugin.getServer().getLogger().info(getName() + " " + getVersion() + " by " + getAuthor() + " has been disabled!");
-		
-		ProjectKorra.plugin.getServer().getPluginManager().removePermission(this.perm);
+		ProjectKorra.log.info("Successfully disabled " + getName() + " by " + getAuthor());
 		
 		super.remove();
 	}
