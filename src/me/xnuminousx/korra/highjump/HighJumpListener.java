@@ -8,6 +8,8 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 
+import me.xnuminousx.korra.highjump.HighJump.HighJumpType;
+
 
 public class HighJumpListener implements Listener {
 
@@ -24,7 +26,7 @@ public class HighJumpListener implements Listener {
 			return;
 
 		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump")) {
-			new HighJump(player);
+			new HighJump(player, HighJumpType.SHIFT);
 		}
 
 	}
@@ -41,7 +43,7 @@ public class HighJumpListener implements Listener {
 			return;
 
 		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump")) {
-			new HighJump(player);
+			new HighJump(player, HighJumpType.CLICK);
 		}
 	}
 

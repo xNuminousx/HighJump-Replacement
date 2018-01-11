@@ -1,11 +1,13 @@
 package me.xnuminousx.korra.highjump;
 
 import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
@@ -13,6 +15,11 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class HighJump extends ChiAbility implements AddonAbility {
+	
+	public enum HighJumpType {
+		CLICK, SHIFT
+	}
+	private HighJumpType highJumpType;
 
 	private long height;
 	private long distance;
@@ -23,13 +30,14 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	private Location location;
 	private Location origin;
 	
-	public HighJump(Player player) {
+	public HighJump(Player player, HighJumpType highJumpType) {
 		super(player);
 		
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
 		
+		this.highJumpType = highJumpType;
 		setFields();
 		start();
 	}
@@ -46,25 +54,21 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline() || !com.projectkorra.projectkorra.GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(org.bukkit.block.BlockFace.DOWN))) {
+		if (player.isDead() || !player.isOnline() || !GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
 			remove();
 			return;
 		}
-		if (player.isSneaking()) {
+		if (this.highJumpType == HighJumpType.SHIFT) {
 			onShift();
-			
-		} else {
-			onClick();
-			
-		}
-		if (player.isSprinting()) {
-			onSprint();
-			
+		} else if (this.highJumpType == HighJumpType.CLICK) {
+			if (player.isSprinting()) {
+				onSprint();
+			} else {
+				onClick();
+			}
 		}
 		poof();
-		bPlayer.addCooldown(this);
 		remove();
-		return;
 	}
 	private void onShift() {
 		Vector vec = player.getLocation().getDirection().normalize().multiply(-distance);
@@ -88,6 +92,13 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		player.getLocation();
 		ParticleEffect.CRIT.display(location, 0.5F, 1F, 0.5F, 0.5F, 20);
 		ParticleEffect.CLOUD.display(location, 0.5F, 1F, 0.5F, 0.002F, 30);
+	}
+	
+	@Override
+	public void remove() {	
+		super.remove();
+		bPlayer.addCooldown(this);
+		return;
 	}
 	
 	@Override
