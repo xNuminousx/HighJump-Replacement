@@ -46,9 +46,9 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 
 	private void setFields() {
-		this.enableEvade = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.EnableEvade");
-		this.enableJump = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.EnableJump");
-		this.enableLunge = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.EnableLunge");
+		this.enableEvade = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.Evade.Enabled");
+		this.enableJump = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.Jump.Enabled");
+		this.enableLunge = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.Lunge.Enabled");
 		
 		this.jumpHeight = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Jump.Height");
 		
@@ -70,21 +70,21 @@ public class HighJump extends ChiAbility implements AddonAbility {
 			remove();
 			return;
 		}
-		if (this.highJumpType == HighJumpType.SHIFT) {
-			if (enableEvade) {
-				onShift();
-			}
+		if (this.highJumpType == HighJumpType.SHIFT && enableEvade) {
+			onShift();
+			poof();
+			remove();
 		} else if (this.highJumpType == HighJumpType.CLICK) {
-			if (player.isSprinting()) {
-				if (enableLunge) {
-					onSprint();
-				}
+			if (player.isSprinting() && enableLunge) {
+				onSprint();
+				poof();
+				remove();
 			} else if (enableJump) {
 				onClick();
+				poof();
+				remove();
 			}
 		}
-		poof();
-		remove();
 	}
 	private void onShift() {
 		Vector vec = player.getLocation().getDirection().normalize().multiply(-evadeDistance);
@@ -111,9 +111,9 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	
 	@Override
-	public void remove() {	
-		super.remove();
+	public void remove() {
 		bPlayer.addCooldown(this);
+		super.remove();
 		return;
 	}
 	
@@ -139,7 +139,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	@Override
 	public String getDescription() {
-		return "As a replacement for the original HighJump, this ability offers you many modes of mobility. When you tap shift you will be lunged backwards; possibly to escape enemies. When you left click you will jump high in the sky; possibly to dodge obstacles. If you left click WHILE sprinting, you will lunge forward; possibly as a way to get closer to your target. Enjoy!";
+		return "Chiblockers are skilled acrobats and this HighJump Replacement satisfies those abilities! Now, you can lunge forward, lunge backwards, or use the classic HighJump if you so desire!";
 	}
 	@Override
 	public String getInstructions() {
@@ -166,9 +166,9 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	public void load() {
 		ProjectKorra.plugin.getServer().getPluginManager().registerEvents(new HighJumpListener(), ProjectKorra.plugin);
 		
-		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.EnableJump", true);
-		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.EnableLunge", true);
-		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.EnableEvade", true);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Jump.Enabled", true);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Lunge.Enabled", true);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Enabled", true);
 		
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Cooldown", 5000);
 		
@@ -178,8 +178,10 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Lunge.Distance", 2);
 		
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Height", 1);
-		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Distance", 1);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Distance", 2);
 		ConfigManager.defaultConfig.save();
+		
+		ProjectKorra.log.info("Successfully enabled " + getName() + " by " + getAuthor());
 	}
 
 	@Override
