@@ -19,18 +19,23 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	private HighJumpType highJumpType;
 
+	private long jumpCooldown;
 	private long jumpHeight;
+	private long lungeCooldown;
 	private long lungeHeight;
+	private long evadeCooldown;
 	private long evadeHeight;
+	private long doubleJumpCooldown;
+	private long doubleJumpHeight;
 	private long evadeDistance;
 	private long lungeDistance;
-	private long cooldown;
 	
 	private Location location;
 	private Location origin;
 	
 	private boolean enableLunge;
 	private boolean enableJump;
+	private boolean enableDoubleJump;
 	private boolean enableEvade;
 	
 	public HighJump(Player player, HighJumpType highJumpType) {
@@ -48,17 +53,22 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	private void setFields() {
 		this.enableEvade = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.Evade.Enabled");
 		this.enableJump = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.Jump.Enabled");
+		this.enableDoubleJump = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.DoubleJump.Enabled");
 		this.enableLunge = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.Lunge.Enabled");
 		
+		this.jumpCooldown = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Jump.Cooldown");
 		this.jumpHeight = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Jump.Height");
 		
+		this.doubleJumpCooldown = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.DoubleJump.Cooldown");
+		this.doubleJumpHeight = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.DoubleJump.Height");
+		
+		this.lungeCooldown = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Lunge.Cooldown");
 		this.lungeHeight = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Lunge.Height");
 		this.lungeDistance = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Lunge.Distance");
 		
+		this.evadeCooldown = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Evade.Cooldown");
 		this.evadeHeight = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Evade.Height");
 		this.evadeDistance = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Evade.Distance");
-		
-		this.cooldown = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Cooldown");
 		this.origin = player.getLocation().clone();
 		this.location = origin.clone();
 		
@@ -66,55 +76,66 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline() || !GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
 		}
-		if (this.highJumpType == HighJumpType.SHIFT && enableEvade) {
-			onShift();
-			poof();
-			remove();
-		} else if (this.highJumpType == HighJumpType.CLICK) {
-			if (player.isSprinting() && enableLunge) {
-				onSprint();
-				poof();
+		if (GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+			if (this.highJumpType == HighJumpType.SHIFT && enableEvade) {
+				onEvade();
+				bPlayer.addCooldown(this, evadeCooldown);
 				remove();
-			} else if (enableJump) {
-				onClick();
-				poof();
-				remove();
+			} else if (this.highJumpType == HighJumpType.CLICK) {
+				if (player.isSprinting() && enableLunge) {
+					onLunge();
+					bPlayer.addCooldown(this, lungeCooldown);
+					remove();
+				} else if (enableJump) {
+					onJump();
+					bPlayer.addCooldown(this, jumpCooldown);
+					remove();
+				}
 			}
+		} else if (this.highJumpType == HighJumpType.SHIFT && enableDoubleJump) {
+			onDoubleJump();
+			bPlayer.addCooldown(this, doubleJumpCooldown);
+			remove();
+		} else {
+			return;
 		}
 	}
-	private void onShift() {
+	private void onEvade() {
 		Vector vec = player.getLocation().getDirection().normalize().multiply(-evadeDistance);
 		vec.setY(evadeHeight);
 		player.setVelocity(vec);
+		poof();
 		return;
 	}
-	private void onSprint() {
+	private void onLunge() {
 		Vector vec = player.getLocation().getDirection().normalize().multiply(lungeDistance);
 		vec.setY(lungeHeight);
 		player.setVelocity(vec);
+		poof();
 		return;
 	}
-	private void onClick() {
+	private void onJump() {
 		Vector vec = player.getVelocity();
 		vec.setY(jumpHeight);
 		player.setVelocity(vec);
+		poof();
+		return;
+	}
+	private void onDoubleJump() {
+		Vector vec = player.getVelocity();
+		vec.setY(doubleJumpHeight);
+		player.setVelocity(vec);
+		poof();
 		return;
 	}
 	private void poof() {
 		player.getLocation();
 		ParticleEffect.CRIT.display(location, 0.5F, 1F, 0.5F, 0.5F, 20);
 		ParticleEffect.CLOUD.display(location, 0.5F, 1F, 0.5F, 0.002F, 30);
-	}
-	
-	@Override
-	public void remove() {
-		bPlayer.addCooldown(this);
-		super.remove();
-		return;
 	}
 	
 	@Override
@@ -130,7 +151,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return 0;
 	}
 
 	@Override
@@ -167,16 +188,21 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		ProjectKorra.plugin.getServer().getPluginManager().registerEvents(new HighJumpListener(), ProjectKorra.plugin);
 		
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Jump.Enabled", true);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.DoubleJump.Enabled", true);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Lunge.Enabled", true);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Enabled", true);
 		
-		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Cooldown", 5000);
-		
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Jump.Cooldown", 3000);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Jump.Height", 1);
 		
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.DoubleJump.Cooldown", 2000);
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.DoubleJump.Height", 1);
+		
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Lunge.Cooldown", 5000);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Lunge.Height", 1);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Lunge.Distance", 2);
 		
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Cooldown", 5000);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Height", 1);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Distance", 2);
 		ConfigManager.defaultConfig.save();
