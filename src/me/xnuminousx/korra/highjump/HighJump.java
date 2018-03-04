@@ -1,11 +1,9 @@
 package me.xnuminousx.korra.highjump;
 
 import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
@@ -15,7 +13,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 public class HighJump extends ChiAbility implements AddonAbility {
 	
 	public enum HighJumpType {
-		CLICK, SHIFT
+		EVADE, LUNGE, DOUBLEJUMP, JUMP
 	}
 	private HighJumpType highJumpType;
 
@@ -80,28 +78,20 @@ public class HighJump extends ChiAbility implements AddonAbility {
 			remove();
 			return;
 		}
-		if (GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
-			if (this.highJumpType == HighJumpType.SHIFT && enableEvade) {
-				onEvade();
-				bPlayer.addCooldown(this, evadeCooldown);
-				remove();
-			} else if (this.highJumpType == HighJumpType.CLICK) {
-				if (player.isSprinting() && enableLunge) {
-					onLunge();
-					bPlayer.addCooldown(this, lungeCooldown);
-					remove();
-				} else if (enableJump) {
-					onJump();
-					bPlayer.addCooldown(this, jumpCooldown);
-					remove();
-				}
+		if (this.highJumpType == HighJumpType.EVADE && enableEvade) {
+			onEvade();
+			bPlayer.addCooldown(this, evadeCooldown);
+		} else if (this.highJumpType == HighJumpType.LUNGE && enableLunge) {
+			if (player.isSprinting()) {
+				onLunge();
+				bPlayer.addCooldown(this, lungeCooldown);
 			}
-		} else if (this.highJumpType == HighJumpType.SHIFT && enableDoubleJump) {
+		} else if (this.highJumpType == HighJumpType.JUMP && enableJump) {
+			onJump();
+			bPlayer.addCooldown(this, jumpCooldown);
+		} else if (this.highJumpType == HighJumpType.DOUBLEJUMP && enableDoubleJump) {
 			onDoubleJump();
 			bPlayer.addCooldown(this, doubleJumpCooldown);
-			remove();
-		} else {
-			return;
 		}
 	}
 	private void onEvade() {
@@ -109,6 +99,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		vec.setY(evadeHeight);
 		player.setVelocity(vec);
 		poof();
+		remove();
 		return;
 	}
 	private void onLunge() {
@@ -116,6 +107,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		vec.setY(lungeHeight);
 		player.setVelocity(vec);
 		poof();
+		remove();
 		return;
 	}
 	private void onJump() {
@@ -123,6 +115,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		vec.setY(jumpHeight);
 		player.setVelocity(vec);
 		poof();
+		remove();
 		return;
 	}
 	private void onDoubleJump() {
@@ -130,6 +123,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		vec.setY(doubleJumpHeight);
 		player.setVelocity(vec);
 		poof();
+		remove();
 		return;
 	}
 	private void poof() {
