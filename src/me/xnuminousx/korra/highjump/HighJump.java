@@ -154,11 +154,11 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	@Override
 	public String getDescription() {
-		return "Chiblockers are skilled acrobats and this HighJump Replacement satisfies those abilities! Now, you can lunge forward, lunge backwards, or use the classic HighJump if you so desire!";
+		return "Chiblockers are skilled acrobats and this HighJump Replacement satisfies those abilities! Now, you can lunge forward, lunge backwards, activate a double jump, or use the classic HighJump if you so desire!";
 	}
 	@Override
 	public String getInstructions() {
-		return "Left-Click: Jump up. Tap-Shift: Lunge backwards. Spint+Click: Lunge Forwards.";
+		return "Left-Click: Jump up. Tap-Shift: Lunge backwards. Spint+Click: Lunge Forwards. Tap-Shift in the air: Double Jump";
 	}
 
 	@Override
@@ -168,7 +168,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public String getVersion() {
-		return "1.8";
+		return "1.9";
 	}
 
 
@@ -206,9 +206,8 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public void stop() {
-		ProjectKorra.log.info("Successfully disabled " + getName() + " by " + getAuthor());
-		
 		super.remove();
+		ProjectKorra.log.info("Successfully disabled " + getName() + " by " + getAuthor());
 	}
 
 }
