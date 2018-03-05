@@ -67,6 +67,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		this.evadeCooldown = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Evade.Cooldown");
 		this.evadeHeight = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Evade.Height");
 		this.evadeDistance = ConfigManager.getConfig().getLong("ExtraAbilities.xNuminousx.HighJump.Evade.Distance");
+		
 		this.origin = player.getLocation().clone();
 		this.location = origin.clone();
 		
@@ -154,11 +155,11 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	@Override
 	public String getDescription() {
-		return "Chiblockers are skilled acrobats and this HighJump Replacement satisfies those abilities! Now, you can lunge forward, lunge backwards, activate a double jump, or use the classic HighJump if you so desire!";
+		return ConfigManager.languageConfig.get().getString("ExtraAbilities.xNuminousx.HighJump.Description");
 	}
 	@Override
 	public String getInstructions() {
-		return "Left-Click: Jump up. Tap-Shift: Lunge backwards. Spint+Click: Lunge Forwards. Tap-Shift in the air: Double Jump";
+		return ConfigManager.languageConfig.get().getString("ExtraAbilities.xNuminousx.HighJump.Instructions");
 	}
 
 	@Override
@@ -181,6 +182,9 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	public void load() {
 		ProjectKorra.plugin.getServer().getPluginManager().registerEvents(new HighJumpListener(), ProjectKorra.plugin);
 		
+		ConfigManager.languageConfig.get().addDefault("ExtraAbilities.xNuminousx.HighJump.Description", "Chiblockers are skilled acrobats and this HighJump Replacement satisfies those abilities! Now, you can lunge forward, lunge backwards, activate a double jump, or use the classic HighJump if you so desire!");
+		ConfigManager.languageConfig.get().addDefault("ExtraAbilities.xNuminousx.HighJump.Instructions", "Left-Click: Jump up. Tap-Shift: Lunge backwards. Spint+Click: Lunge Forwards. Tap-Shift in the air: Double Jump");
+		
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Jump.Enabled", true);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.DoubleJump.Enabled", true);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Lunge.Enabled", true);
@@ -200,6 +204,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Height", 1);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Evade.Distance", 2);
 		ConfigManager.defaultConfig.save();
+		ConfigManager.languageConfig.save();
 		
 		ProjectKorra.log.info("Successfully enabled " + getName() + " by " + getAuthor());
 	}
