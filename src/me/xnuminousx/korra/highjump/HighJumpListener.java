@@ -51,18 +51,15 @@ public class HighJumpListener implements Listener {
 		if (player.isSprinting()) {
 			isSprinting = true;
 		}
-		if (GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
-			isOnBlock = true;
-		}
 
 		if (event.isCancelled() || bPlayer == null) {
 			return;
 
 		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase(null)) {
 			return;
-		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump") && (isSprinting == true) && (isOnBlock == true)) {
+		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump") && (isSprinting == true)) {
 			new HighJump(player, HighJumpType.LUNGE);
-		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump") && (isSprinting == false) && (isOnBlock == false)) {
+		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump") && (isSprinting == false)) {
 			new HighJump(player, HighJumpType.JUMP);
 		}
 	}

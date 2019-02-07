@@ -129,8 +129,8 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	private void poof() {
 		player.getLocation();
-		ParticleEffect.CRIT.display(location, 0.5F, 1F, 0.5F, 0.5F, 20);
-		ParticleEffect.CLOUD.display(location, 0.5F, 1F, 0.5F, 0.002F, 30);
+		ParticleEffect.CRIT.display(location, 20, 0.5F, 1F, 0.5F, 0.5F);
+		ParticleEffect.CLOUD.display(location, 30, 0.5F, 1F, 0.5F, 0.002F);
 	}
 	
 	@Override
@@ -169,13 +169,13 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public String getVersion() {
-		return "1.9";
+		return "MC-1.13.2 / PK-1.8.8 / v1.10";
 	}
 
 
 	@Override
 	public String getAuthor() {
-		return "xNuminousx";
+		return "Numinous";
 	}
 
 	@Override
