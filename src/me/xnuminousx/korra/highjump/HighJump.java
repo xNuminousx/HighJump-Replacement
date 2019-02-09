@@ -35,6 +35,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	private boolean enableJump;
 	private boolean enableDoubleJump;
 	private boolean enableEvade;
+	private boolean playParticles;
 	
 	public HighJump(Player player, HighJumpType highJumpType) {
 		super(player);
@@ -49,6 +50,8 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 
 	private void setFields() {
+		this.playParticles = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.Particles.Enabled");
+		
 		this.enableEvade = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.Evade.Enabled");
 		this.enableJump = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.Jump.Enabled");
 		this.enableDoubleJump = ConfigManager.getConfig().getBoolean("ExtraAbilities.xNuminousx.HighJump.DoubleJump.Enabled");
@@ -128,9 +131,13 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		return;
 	}
 	private void poof() {
-		player.getLocation();
-		ParticleEffect.CRIT.display(location, 20, 0.5F, 1F, 0.5F, 0.5F);
-		ParticleEffect.CLOUD.display(location, 30, 0.5F, 1F, 0.5F, 0.002F);
+		if (playParticles) {
+			player.getLocation();
+			ParticleEffect.CRIT.display(location, 20, 0.5F, 1F, 0.5F, 0.5F);
+			ParticleEffect.CLOUD.display(location, 30, 0.5F, 1F, 0.5F, 0.002F);
+		} else {
+			return;
+		}
 	}
 	
 	@Override
@@ -184,6 +191,8 @@ public class HighJump extends ChiAbility implements AddonAbility {
 		
 		ConfigManager.languageConfig.get().addDefault("ExtraAbilities.xNuminousx.HighJump.Description", "Chiblockers are skilled acrobats and this HighJump Replacement satisfies those abilities! Now, you can lunge forward, lunge backwards, activate a double jump, or use the classic HighJump if you so desire!");
 		ConfigManager.languageConfig.get().addDefault("ExtraAbilities.xNuminousx.HighJump.Instructions", "Left-Click: Jump up. Tap-Shift: Lunge backwards. Spint+Click: Lunge Forwards. Tap-Shift in the air: Double Jump");
+		
+		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Particles.Enabled", true);
 		
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.Jump.Enabled", true);
 		ConfigManager.getConfig().addDefault("ExtraAbilities.xNuminousx.HighJump.DoubleJump.Enabled", true);

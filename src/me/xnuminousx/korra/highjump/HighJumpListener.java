@@ -1,5 +1,6 @@
 package me.xnuminousx.korra.highjump;
 
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,7 +9,6 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
 
 import me.xnuminousx.korra.highjump.HighJump.HighJumpType;
 
@@ -24,11 +24,12 @@ public class HighJumpListener implements Listener {
 		isOnBlock = false;
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		Material block = player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
 		
-		if (GeneralMethods.isSolid(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+		if (block.isSolid()) {
 			isOnBlock = true;
 		}
-
+		
 		if (event.isCancelled() || bPlayer == null) {
 			return;
 		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase(null)) {
