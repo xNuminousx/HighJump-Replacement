@@ -14,14 +14,11 @@ import me.xnuminousx.korra.highjump.HighJump.HighJumpType;
 
 
 public class HighJumpListener implements Listener {
-	
-	private boolean isOnBlock;
-	private boolean isSprinting;
 
 	@EventHandler
 	public void onSneak(PlayerToggleSneakEvent event) {
 
-		isOnBlock = false;
+		boolean isOnBlock = false;
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		Material block = player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
@@ -30,39 +27,25 @@ public class HighJumpListener implements Listener {
 			isOnBlock = true;
 		}
 		
-		if (event.isCancelled() || bPlayer == null) {
-			return;
-		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase(null)) {
-			return;
-		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump") && (isOnBlock == true)) {
-			new HighJump(player, HighJumpType.EVADE);
-		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump") && (isOnBlock == false)) {
-			new HighJump(player, HighJumpType.DOUBLEJUMP);
+		if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump")) {
+			if (isOnBlock) {
+				new HighJump(player, HighJumpType.EVADE);
+			} else {
+				new HighJump(player, HighJumpType.DOUBLEJUMP);
+			}
 		}
-
 	}
 	@EventHandler
 	public void onSwing(PlayerAnimationEvent event) {
-
-		isSprinting = false;
-		isOnBlock = false;
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		
-		if (player.isSprinting()) {
-			isSprinting = true;
-		}
 
-		if (event.isCancelled() || bPlayer == null) {
-			return;
-
-		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase(null)) {
-			return;
-		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump") && (isSprinting == true)) {
-			new HighJump(player, HighJumpType.LUNGE);
-		} else if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump") && (isSprinting == false)) {
-			new HighJump(player, HighJumpType.JUMP);
+		if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HighJump")) {
+			if (player.isSprinting()) {
+				new HighJump(player, HighJumpType.LUNGE);
+			} else {
+				new HighJump(player, HighJumpType.JUMP);
+			}
 		}
 	}
-
 }
