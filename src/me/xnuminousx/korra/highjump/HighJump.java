@@ -91,7 +91,6 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	private void onDoubleJump() {
 		if (enableDoubleJump && this.highJumpType == HighJumpType.DOUBLEJUMP) {
-			player.sendMessage("double jump");
 			Vector vec = player.getVelocity();
 			vec.setY(doubleJumpHeight);
 			player.setVelocity(vec);
@@ -102,7 +101,6 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	private void onEvade() {
 		if (enableEvade && this.highJumpType == HighJumpType.EVADE) {
-			player.sendMessage("evade");
 			Vector vec = player.getLocation().getDirection().normalize().multiply(-evadeDistance);
 			vec.setY(evadeHeight);
 			player.setVelocity(vec);
@@ -113,7 +111,6 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	private void onJump() {
 		if (enableJump && this.highJumpType == HighJumpType.JUMP) {
-			player.sendMessage("jump");
 			Vector vec = player.getVelocity();
 			vec.setY(jumpHeight);
 			player.setVelocity(vec);
@@ -124,7 +121,6 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	}
 	private void onLunge() {
 		if (enableLunge && this.highJumpType == HighJumpType.LUNGE) {
-			player.sendMessage("lunge");
 			Vector vec = player.getLocation().getDirection().normalize().multiply(lungeDistance);
 			vec.setY(lungeHeight);
 			player.setVelocity(vec);
@@ -184,7 +180,6 @@ public class HighJump extends ChiAbility implements AddonAbility {
 	public String getVersion() {
 		return "MC-1.13.2 / PK-1.8.8 / v1.12";
 	}
-
 
 	@Override
 	public String getAuthor() {
