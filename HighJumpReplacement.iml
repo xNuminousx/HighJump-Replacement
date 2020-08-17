@@ -23,23 +23,25 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="11" jdkType="JavaSDK" />
     <orderEntry type="module-library">
-      <library name="ProjectKorra-1.8.8.jar">
+      <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Desktop/External Jars/ProjectKorra-1.8.8.jar!/" />
+          <root url="jar://D:/Downloads/ProjectKorra-1.8.9.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="spigot-1.13.2.jar">
+      <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Desktop/External Jars/spigot-1.13.2.jar!/" />
+          <root url="jar://D:/Downloads/spigot-1.16.1.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://D:/Downloads/spigot-1.16.1.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
   </component>

@@ -178,7 +178,7 @@ public class HighJump extends ChiAbility implements AddonAbility {
 
 	@Override
 	public String getVersion() {
-		return "MC-1.13.2 / PK-1.8.8 / v1.12";
+		return "1.13";
 	}
 
 	@Override
